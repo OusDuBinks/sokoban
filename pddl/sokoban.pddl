@@ -2,10 +2,8 @@
 ;; Domaine PDDL du Sokoban (STRIPS + typage)
 ;;
 ;; Modelisation :
-;;  - une constante "cell" par case praticable (les murs ne sont pas des objets :
-;;    une case qui n'existe pas ne peut pas etre traversee) ;
-;;  - 4 directions, declarees dans le domaine. La direction est le 1er parametre
-;;    de chaque action, ce qui permet de lire directement U/D/L/R dans le plan.
+;;  - une constante "cell" par case praticable (les murs ne sont pas des objets : une case qui n'existe pas ne peut pas etre traversee) ;
+;;  - 4 directions, declarees dans le domaine. La direction est le 1er parametre de chaque action, ce qui permet de lire directement U/D/L/R dans le plan.
 ;;
 ;; Les deux actions correspondent chacune a exactement UN coup du jeu.
 ;; On utilise le predicat (clear ?c) plutot qu'une negation de (at-box ?c) pour

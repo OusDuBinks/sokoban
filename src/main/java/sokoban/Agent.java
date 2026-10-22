@@ -15,19 +15,16 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Le "joueur" : lit l'etat du jeu sur l'entree standard, calcule un plan avec PDDL4J
- * (dans un processus separe, voir {@link Planner}) puis joue un coup par tour.
  *
  * Premier tour : "largeur hauteur nbCaisses", la grille ('#' mur, '*' objectif, '.' sol),
  * la position du gardien, puis celle de chaque caisse. Tours suivants : gardien + caisses.
- * Sortie : un caractere par tour parmi U, D, L, R. stdout est reserve au jeu : tout le
- * debug passe par stderr et par le fichier journal (voir {@link #LOG}).
+ * Sortie : un caractere par tour parmi U, D, L, R
  */
 public class Agent {
 
     /**
-     * Copie integree du domaine PDDL, utilisee si pddl/sokoban.pddl est introuvable
-     * (le jeu peut etre lance depuis un autre dossier). Elle doit rester identique,
-     * a la mise en forme pres, au fichier pddl/sokoban.pddl.
+     * Copie integree du domaine PDDL, utilisee pour codingame car codingame ne connait pas le répertoire pddl/*
+     * (le jeu peut etre lance depuis un autre dossier).
      */
     static final String DOMAIN = String.join("\n",
             "(define (domain sokoban)",
@@ -53,7 +50,7 @@ public class Agent {
             ")",
             "");
 
-    /** Journal de l'agent (la console de l'agent n'est pas visible quand il tourne dans le jeu). */
+    /** Journal de l'agent */
     static final Path LOG = Paths.get(System.getProperty("java.io.tmpdir"), "sokoban-agent.log");
 
     static void log(String msg) {
@@ -130,8 +127,7 @@ public class Agent {
     }
 
     /**
-     * Lance le planificateur dans un processus Java separe (hors du chargeur de classes
-     * du jeu, incompatible avec Log4j utilise par PDDL4J) et renvoie le plan en U/D/L/R.
+     * Lance le planificateur dans un processus Java separe du jeu et renvoie le plan en U/D/L/R.
      */
     static String solve(String domain, String problem) throws Exception {
         String javaBin = Paths.get(System.getProperty("java.home"), "bin", "java").toString();
@@ -150,8 +146,6 @@ public class Agent {
         pb.redirectOutput(out.toFile());
         Process p = pb.start();
 
-        // Le 1er tour est limite a 10 s par le Referee : le planificateur a son propre
-        // timeout (8 s), on garde une marge pour le demarrage de la JVM.
         if (!p.waitFor(59500, TimeUnit.MILLISECONDS)) {
             p.destroyForcibly();
             log("Planificateur interrompu (timeout)");
